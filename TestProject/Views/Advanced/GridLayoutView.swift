@@ -22,32 +22,54 @@ struct GridLayoutView: View {
     @State private var selectedTab = 0
     @State private var selectedItem: String? = nil
 
+    struct ColorItem: Identifiable {
+        let name: String
+        let color: Color
+        let emoji: String
+        var id: String { name }
+    }
+
+    struct AppIcon: Identifiable {
+        let name: String
+        let icon: String
+        let color: Color
+        var id: String { name }
+    }
+
     // Dữ liệu màu sắc cho grid
-    let colorItems: [(name: String, color: Color, emoji: String)] = [
-        ("Đỏ", .red, "🔴"), ("Cam", .orange, "🟠"), ("Vàng", .yellow, "🟡"),
-        ("Xanh lá", .green, "🟢"), ("Xanh dương", .blue, "🔵"), ("Tím", .purple, "🟣"),
-        ("Hồng", .pink, "🩷"), ("Nâu", .brown, "🟤"), ("Đen", .black, "⚫"),
-        ("Xám", .gray, "⬜"), ("Ngọc", .teal, "🩵"), ("Chàm", .indigo, "💜"),
-        ("Vàng kim", Color(hue: 0.13, saturation: 0.9, brightness: 0.9), "🥇"),
-        ("San hô", Color(hue: 0.05, saturation: 0.8, brightness: 0.95), "🪸"),
-        ("Bạc hà", Color(hue: 0.46, saturation: 0.6, brightness: 0.9), "🌿"),
-        ("Tím lavender", Color(hue: 0.75, saturation: 0.4, brightness: 0.9), "💐"),
+    let colorItems: [ColorItem] = [
+        ColorItem(name: "Đỏ", color: .red, emoji: "🔴"),
+        ColorItem(name: "Cam", color: .orange, emoji: "🟠"),
+        ColorItem(name: "Vàng", color: .yellow, emoji: "🟡"),
+        ColorItem(name: "Xanh lá", color: .green, emoji: "🟢"),
+        ColorItem(name: "Xanh dương", color: .blue, emoji: "🔵"),
+        ColorItem(name: "Tím", color: .purple, emoji: "🟣"),
+        ColorItem(name: "Hồng", color: .pink, emoji: "🩷"),
+        ColorItem(name: "Nâu", color: .brown, emoji: "🟤"),
+        ColorItem(name: "Đen", color: .black, emoji: "⚫"),
+        ColorItem(name: "Xám", color: .gray, emoji: "⬜"),
+        ColorItem(name: "Ngọc", color: .teal, emoji: "🩵"),
+        ColorItem(name: "Chàm", color: .indigo, emoji: "💜"),
+        ColorItem(name: "Vàng kim", color: Color(hue: 0.13, saturation: 0.9, brightness: 0.9), emoji: "🥇"),
+        ColorItem(name: "San hô", color: Color(hue: 0.05, saturation: 0.8, brightness: 0.95), emoji: "🪸"),
+        ColorItem(name: "Bạc hà", color: Color(hue: 0.46, saturation: 0.6, brightness: 0.9), emoji: "🌿"),
+        ColorItem(name: "Tím lavender", color: Color(hue: 0.75, saturation: 0.4, brightness: 0.9), emoji: "💐"),
     ]
 
     // Dữ liệu app icons cho demo
-    let appIcons = [
-        ("Safari", "safari.fill", Color.blue),
-        ("Mail", "envelope.fill", Color.blue),
-        ("Tin nhắn", "message.fill", Color.green),
-        ("Ảnh", "photo.fill", Color.orange),
-        ("Camera", "camera.fill", Color.gray),
-        ("Maps", "map.fill", Color.green),
-        ("Cài đặt", "gearshape.fill", Color.gray),
-        ("App Store", "app.badge.fill", Color.blue),
-        ("Nhắc nhở", "checklist", Color.red),
-        ("Ghi chú", "note.text", Color.yellow),
-        ("Lịch", "calendar", Color.red),
-        ("Đồng hồ", "clock.fill", Color.black),
+    let appIcons: [AppIcon] = [
+        AppIcon(name: "Safari", icon: "safari.fill", color: .blue),
+        AppIcon(name: "Mail", icon: "envelope.fill", color: .blue),
+        AppIcon(name: "Tin nhắn", icon: "message.fill", color: .green),
+        AppIcon(name: "Ảnh", icon: "photo.fill", color: .orange),
+        AppIcon(name: "Camera", icon: "camera.fill", color: .gray),
+        AppIcon(name: "Maps", icon: "map.fill", color: .green),
+        AppIcon(name: "Cài đặt", icon: "gearshape.fill", color: .gray),
+        AppIcon(name: "App Store", icon: "app.badge.fill", color: .blue),
+        AppIcon(name: "Nhắc nhở", icon: "checklist", color: .red),
+        AppIcon(name: "Ghi chú", icon: "note.text", color: .yellow),
+        AppIcon(name: "Lịch", icon: "calendar", color: .red),
+        AppIcon(name: "Đồng hồ", icon: "clock.fill", color: .black),
     ]
 
     var body: some View {
@@ -95,7 +117,7 @@ struct GridLayoutView: View {
 
             // LazyVGrid: chỉ render item khi hiển thị → tiết kiệm bộ nhớ
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: columnCount), spacing: 8) {
-                ForEach(colorItems, id: \.name) { item in
+                ForEach(colorItems) { item in
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(item.color.gradient)
@@ -144,19 +166,19 @@ struct GridLayoutView: View {
         let columns = [GridItem(.adaptive(minimum: 70, maximum: 120))]
 
         return LazyVGrid(columns: columns, spacing: 20) {
-            ForEach(appIcons, id: \.0) { app in
+            ForEach(appIcons) { app in
                 VStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 18)
-                            .fill(app.2.gradient)
+                            .fill(app.color.gradient)
                             .frame(width: 70, height: 70)
-                        Image(systemName: app.1)
+                        Image(systemName: app.icon)
                             .font(.system(size: 32))
                             .foregroundStyle(.white)
                     }
-                    .shadow(color: app.2.opacity(0.4), radius: 6, y: 3)
+                    .shadow(color: app.color.opacity(0.4), radius: 6, y: 3)
 
-                    Text(app.0)
+                    Text(app.name)
                         .font(.caption)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -188,7 +210,7 @@ struct GridLayoutView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             // LazyHGrid: lưới ngang, rows = số hàng
             LazyHGrid(rows: [GridItem(.fixed(100)), GridItem(.fixed(100))], spacing: 12) {
-                ForEach(colorItems, id: \.name) { item in
+                ForEach(colorItems) { item in
                     ZStack {
                         RoundedRectangle(cornerRadius: 16)
                             .fill(item.color.gradient)
@@ -211,12 +233,12 @@ struct GridLayoutView: View {
     private var horizontalAppGrid: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHGrid(rows: Array(repeating: GridItem(.fixed(70)), count: 3), spacing: 8) {
-                ForEach(appIcons, id: \.0) { app in
+                ForEach(appIcons) { app in
                     ZStack {
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(app.2.gradient)
+                            .fill(app.color.gradient)
                             .frame(width: 70, height: 70)
-                        Image(systemName: app.1)
+                        Image(systemName: app.icon)
                             .foregroundStyle(.white)
                             .font(.title2)
                     }
